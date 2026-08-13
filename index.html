@@ -30,7 +30,7 @@
                 Rick <span>Pal</span>
             </div>
 
-            <ul class="nav-links">
+            <ul class="nav-links" id="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#skills">Skills</a></li>
@@ -41,6 +41,19 @@
             </ul>
 
             <a href="#hire" class="hire-btn">Hire Me</a>
+
+            <button
+                type="button"
+                class="nav-toggle"
+                id="nav-toggle"
+                aria-label="Toggle navigation menu"
+                aria-expanded="false"
+                aria-controls="nav-links"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
 
         </nav>
     </header>
@@ -101,7 +114,7 @@
                 <div class="profile-frame">
 
                     <img
-                        src="photo.jpeg"
+                        src="profile.jpg"
                         alt="Portrait of Rick Pal"
                         class="profile-photo"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
@@ -278,151 +291,139 @@
 
     </section>
 
-     <section id="projects" class="projects-section">
- 
+
+    <!-- ================= PROJECTS ================= -->
+
+    <section id="projects" class="projects-section">
+
         <div class="section-title">
- 
+
             <p>WHAT I'VE BUILT</p>
- 
+
             <h2>My <span>Projects</span></h2>
- 
+
         </div>
- 
- 
+
+
         <div class="projects-container">
- 
- 
+
+
             <div class="project-card">
- 
+
                 <div class="project-window">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
- 
+
                 <div class="project-thumb" aria-hidden="true">
                     <span>01</span>
                 </div>
- 
+
                 <div class="project-body">
- 
+
                     <h3>Personal Portfolio Website</h3>
- 
+
                     <p>
                         A responsive personal portfolio built to showcase
                         my skills, education and projects to potential
                         clients and employers.
                     </p>
- 
+
                     <div class="project-tags">
                         <span>HTML5</span>
                         <span>CSS3</span>
                         <span>JavaScript</span>
                     </div>
- 
-                   <div class="project-links">
 
-    <a href="#" target="_blank" rel="noopener noreferrer">
-        Live Demo →
-    </a>
+                    <div class="project-links">
+                        <a href="#" target="_blank" rel="noopener noreferrer">Live Demo →</a>
+                        <a href="#" target="_blank" rel="noopener noreferrer">Source Code →</a>
+                    </div>
 
-    <a
-        href="https://github.com/PalofCode/rick-pal-portfolio"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        Source Code →
-    </a>
-
-</div>
- 
                 </div>
- 
+
             </div>
- 
- 
+
+
             <div class="project-card">
- 
+
                 <div class="project-window">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
- 
+
                 <div class="project-thumb" aria-hidden="true">
                     <span>02</span>
                 </div>
- 
+
                 <div class="project-body">
- 
+
                     <h3>Task Manager App</h3>
- 
+
                     <p>
                         A full-stack task management app with user
                         authentication, task CRUD operations and a
                         Node.js backend connected to a SQL database.
                     </p>
- 
+
                     <div class="project-tags">
                         <span>Node.js</span>
                         <span>SQL</span>
                         <span>REST API</span>
                     </div>
- 
+
                     <div class="project-links">
                         <a href="#" target="_blank" rel="noopener noreferrer">Live Demo →</a>
                         <a href="#" target="_blank" rel="noopener noreferrer">Source Code →</a>
                     </div>
- 
+
                 </div>
- 
+
             </div>
- 
- 
+
+
             <div class="project-card">
- 
+
                 <div class="project-window">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
- 
+
                 <div class="project-thumb" aria-hidden="true">
                     <span>03</span>
                 </div>
- 
+
                 <div class="project-body">
- 
+
                     <h3>UI Prototype Kit</h3>
- 
+
                     <p>
                         A set of reusable, accessible UI components
                         prototyped in Figma and converted into
                         production-ready HTML/CSS.
                     </p>
- 
+
                     <div class="project-tags">
                         <span>Figma</span>
                         <span>CSS3</span>
                         <span>Git</span>
                     </div>
- 
+
                     <div class="project-links">
                         <a href="#" target="_blank" rel="noopener noreferrer">Live Demo →</a>
                         <a href="#" target="_blank" rel="noopener noreferrer">Source Code →</a>
                     </div>
- 
+
                 </div>
- 
+
             </div>
- 
+
         </div>
- 
+
     </section>
- 
- 
-    
- 
 
 
     <!-- ================= EDUCATION ================= -->
@@ -444,7 +445,7 @@
             <div class="education-card">
 
                 <span class="education-year">
-                    2024 - Present
+                    2023 - Present
                 </span>
 
                 <h3>
@@ -507,8 +508,7 @@
 
 
             <a
-                href="Resume.pdf"
-
+                href="resume.pdf"
                 download="Rick_Pal_Resume.pdf"
                 class="btn"
             >
@@ -554,7 +554,7 @@
                     <h4>📧 Email</h4>
 
                     <p>
-                        <a href="mailto:your-email@example.com">rickpal005@gmail.com</a>
+                        <a href="mailto:your-email@example.com">your-email@example.com</a>
                     </p>
 
                 </div>
@@ -565,7 +565,7 @@
                     <h4>📍 Location</h4>
 
                     <p>
-                        kolkata,West Bengal, India
+                        West Bengal, India
                     </p>
 
                 </div>
@@ -577,7 +577,7 @@
 
                     <p>
                         <a href="#" target="_blank" rel="noopener noreferrer">
-                            https://www.linkedin.com/in/rick-pal-a33783349?utm_source=share_via&utm_content=profile&utm_medium=member_android
+                            LinkedIn Profile
                         </a>
                     </p>
 
@@ -590,7 +590,7 @@
 
                     <p>
                         <a href="#" target="_blank" rel="noopener noreferrer">
-                            https://github.com/PalOfCode
+                            GitHub Profile
                         </a>
                     </p>
 
@@ -601,7 +601,7 @@
 
             <!-- Contact Form -->
 
-            <form class="contact-form" action="#" method="POST">
+            <form class="contact-form" id="contact-form" action="#" method="POST" novalidate>
 
                 <label class="visually-hidden" for="contact-name">Your Name</label>
                 <input
@@ -643,12 +643,18 @@
                 <button
                     type="submit"
                     class="btn"
-                     id="nav-toggle"
                 >
                     Send Message
                 </button>
 
             </form>
+
+            <p
+                class="form-status"
+                id="form-status"
+                role="status"
+                aria-live="polite"
+            ></p>
 
         </div>
 
