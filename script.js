@@ -1,160 +1,167 @@
-/* ============================================================
-   RICK PAL — PORTFOLIO SCRIPT
-   Handles: active nav link on scroll, scroll-reveal animations,
-   sticky header shadow, and contact form validation/feedback.
-   ============================================================ */
+// ============================================================
+// RICK PAL — PORTFOLIO SCRIPT
+// Mobile nav toggle, scroll-spy active links, reveal-on-scroll
+// animations, and client-side contact form handling.
+// ============================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
 
-    /* ---------- 1. Active nav link on scroll ---------- */
+    /* ---------- Mobile nav toggle ---------- */
 
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a');
+    var navToggle = document.getElementById('nav-toggle');
+    var navLinks = document.getElementById('nav-links');
 
-    const setActiveLink = () => {
-        let currentId = '';
-        const scrollPos = window.scrollY + 120; // offset for sticky header
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', function () {
+            var isOpen = navLinks.classList.toggle('open');
+            navToggle.classList.toggle('open', isOpen);
+            navToggle.setAttribute('aria-expanded', String(isOpen));
+        });
 
-        sections.forEach((section) => {
-            const top = section.offsetTop;
-            const height = section.offsetHeight;
+        // close the menu after a link is tapped (mobile)
+        navLinks.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                navLinks.classList.remove('open');
+                navToggle.classList.remove('open');
+                navToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    }
 
-            if (scrollPos >= top && scrollPos < top + height) {
+    /* ---------- Scroll-spy: highlight the active nav link ---------- */
+
+    var sections = document.querySelectorAll('section[id]');
+    var navAnchors = document.querySelectorAll('.nav-links a');
+
+    function setActiveLink() {
+        var scrollPos = window.scrollY + 120;
+        var currentId = '';
+
+        sections.forEach(function (section) {
+            if (scrollPos >= section.offsetTop) {
                 currentId = section.getAttribute('id');
             }
         });
 
-        navLinks.forEach((link) => {
-            link.classList.remove('active-link');
-            if (link.getAttribute('href') === `#${currentId}`) {
-                link.classList.add('active-link');
-            }
+        navAnchors.forEach(function (anchor) {
+            anchor.classList.toggle('active', anchor.getAttribute('href') === '#' + currentId);
         });
-    };
+    }
 
-    window.addEventListener('scroll', setActiveLink, { passive: true });
-    setActiveLink();
+    if (sections.length && navAnchors.length) {
+        window.addEventListener('scroll', setActiveLink, { passive: true });
+        setActiveLink();
+    }
 
+    /* ---------- Sticky header shadow once page is scrolled ---------- */
 
-    /* ---------- 2. Header shadow / shrink on scroll ---------- */
+    var header = document.querySelector('header');
 
-    const header = document.querySelector('header');
-
-    const setHeaderState = () => {
-        if (window.scrollY > 20) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+    function setHeaderScrolled() {
+        if (header) {
+            header.classList.toggle('scrolled', window.scrollY > 10);
         }
-    };
+    }
 
-    window.addEventListener('scroll', setHeaderState, { passive: true });
-    setHeaderState();
+    window.addEventListener('scroll', setHeaderScrolled, { passive: true });
+    setHeaderScrolled();
 
+    /* ---------- Reveal-on-scroll for cards ---------- */
 
-    /* ---------- 3. Scroll-reveal animations ---------- */
-
-    const revealTargets = document.querySelectorAll(
-        '.skill-card, .education-card, .service, .about-content, .contact-container, .hero-content'
+    var revealTargets = document.querySelectorAll(
+        '.skill-card, .project-card, .education-card, .service, .about-content, .hero-content'
     );
 
-    revealTargets.forEach((el) => el.classList.add('reveal'));
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if ('IntersectionObserver' in window) {
-        const revealObserver = new IntersectionObserver(
-            (entries, observer) => {
-                entries.forEach((entry) => {
+    if ('IntersectionObserver' in window && !prefersReducedMotion) {
+        revealTargets.forEach(function (el) {
+            el.classList.add('reveal');
+        });
+
+        var observer = new IntersectionObserver(
+            function (entries) {
+                entries.forEach(function (entry) {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('reveal-visible');
+                        entry.target.classList.add('revealed');
                         observer.unobserve(entry.target);
                     }
                 });
             },
-            { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+            { threshold: 0.15 }
         );
 
-        revealTargets.forEach((el) => revealObserver.observe(el));
-    } else {
-        // Fallback: no IntersectionObserver support, just show everything
-        revealTargets.forEach((el) => el.classList.add('reveal-visible'));
+        revealTargets.forEach(function (el) {
+            observer.observe(el);
+        });
     }
 
+    /* ---------- Contact form handling ---------- */
+    // No backend is wired up yet. This validates the input and shows
+    // feedback in place. Swap the body of submitForm() for a real
+    // fetch() call once you have an endpoint (e.g. Formspree, your
+    // own API) to send from.
 
-    /* ---------- 4. Mobile nav: close/scroll behavior ---------- */
+    var form = document.getElementById('contact-form');
+    var status = document.getElementById('form-status');
 
-    navLinks.forEach((link) => {
-        link.addEventListener('click', () => {
-            // Small delay lets the smooth scroll start before losing focus styles
-            link.blur();
-        });
-    });
+    function showStatus(message, isError) {
+        if (!status) return;
+        status.textContent = message;
+        status.classList.toggle('error', Boolean(isError));
+        status.classList.add('visible');
+    }
 
+    function isValidEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
 
-    /* ---------- 5. Contact form validation + feedback ---------- */
-
-    const contactForm = document.querySelector('.contact-form');
-
-    if (contactForm) {
-        const nameField = contactForm.querySelector('#contact-name');
-        const emailField = contactForm.querySelector('#contact-email');
-        const messageField = contactForm.querySelector('#contact-message');
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
-
-        // Create a status message element once
-        const statusMsg = document.createElement('p');
-        statusMsg.className = 'form-status';
-        statusMsg.setAttribute('role', 'status');
-        statusMsg.setAttribute('aria-live', 'polite');
-        contactForm.appendChild(statusMsg);
-
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        const showStatus = (message, isError) => {
-            statusMsg.textContent = message;
-            statusMsg.classList.toggle('form-status-error', isError);
-            statusMsg.classList.toggle('form-status-success', !isError);
-            statusMsg.classList.add('form-status-visible');
-        };
-
-        contactForm.addEventListener('submit', (event) => {
+    if (form) {
+        form.addEventListener('submit', function (event) {
             event.preventDefault();
 
-            const name = nameField.value.trim();
-            const email = emailField.value.trim();
-            const message = messageField.value.trim();
+            var name = form.name.value.trim();
+            var email = form.email.value.trim();
+            var message = form.message.value.trim();
 
             if (!name || !email || !message) {
-                showStatus('Please fill in all required fields.', true);
+                showStatus('Please fill in your name, email and message.', true);
                 return;
             }
 
-            if (!emailPattern.test(email)) {
+            if (!isValidEmail(email)) {
                 showStatus('Please enter a valid email address.', true);
-                emailField.focus();
                 return;
             }
 
-            // No backend is wired up yet (action="#"), so simulate a send.
-            const originalLabel = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
+            var submitBtn = form.querySelector('button[type="submit"]');
+            var originalLabel = submitBtn ? submitBtn.textContent : '';
 
-            setTimeout(() => {
-                showStatus(`Thanks, ${name.split(' ')[0]}! Your message has been received.`, false);
-                contactForm.reset();
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalLabel;
-            }, 900);
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+            }
+
+            // Simulated send. Replace this block with a real request, e.g.:
+            //
+            // fetch('https://your-endpoint.example.com/contact', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ name: name, email: email, message: message })
+            // })
+            //     .then(function (res) { ... })
+            //     .catch(function (err) { ... });
+
+            setTimeout(function () {
+                showStatus('Thanks, ' + name + ' — your message has been noted. I\'ll get back to you soon.', false);
+                form.reset();
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalLabel;
+                }
+            }, 600);
         });
-    }
-
-
-    /* ---------- 6. Auto-update copyright year ---------- */
-
-    const copyrightEl = document.querySelector('.copyright');
-    if (copyrightEl) {
-        const year = new Date().getFullYear();
-        copyrightEl.textContent = copyrightEl.textContent.replace(/\d{4}/, year);
     }
 
 });
