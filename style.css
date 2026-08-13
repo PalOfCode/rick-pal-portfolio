@@ -217,10 +217,11 @@ header {
 }
 
 .nav-links {
-    display: flex;
-    gap: 28px;
-    overflow-x: auto;
-    scrollbar-width: none;
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;   /* ← old version */
+    gap: 18px;
+    padding-bottom: 4px;
 }
 
 .nav-links::-webkit-scrollbar {
