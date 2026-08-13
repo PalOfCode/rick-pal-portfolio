@@ -95,73 +95,110 @@ document.addEventListener('DOMContentLoaded', function () {
             observer.observe(el);
         });
     }
+   /* ---------- Contact form handling ---------- */
 
-    /* ---------- Contact form handling ---------- */
-    // No backend is wired up yet. This validates the input and shows
-    // feedback in place. Swap the body of submitForm() for a real
-    // fetch() call once you have an endpoint (e.g. Formspree, your
-    // own API) to send from.
+var form = document.getElementById('contact-form');
+var status = document.getElementById('form-status');
 
-    var form = document.getElementById('contact-form');
-    var status = document.getElementById('form-status');
+function showStatus(message, isError) {
+    if (!status) return;
 
-    function showStatus(message, isError) {
-        if (!status) return;
-        status.textContent = message;
-        status.classList.toggle('error', Boolean(isError));
-        status.classList.add('visible');
-    }
+    status.textContent = message;
+    status.classList.toggle('error', Boolean(isError));
+    status.classList.add('visible');
+}
 
-    function isValidEmail(value) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    }
+function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
 
-    if (form) {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
+if (form) {
+    form.addEventListener('submit', function (event) {
 
-            var name = form.name.value.trim();
-            var email = form.email.value.trim();
-            var message = form.message.value.trim();
+        // Stop the normal page reload
+        event.preventDefault();
 
-            if (!name || !email || !message) {
-                showStatus('Please fill in your name, email and message.', true);
-                return;
+        var name = form.name.value.trim();
+        var email = form.email.value.trim();
+        var message = form.message.value.trim();
+
+        // Validate name, email and message
+        if (!name || !email || !message) {
+            showStatus(
+                'Please fill in your name, email and message.',
+                true
+            );
+            return;
+        }
+
+        // Validate email
+        if (!isValidEmail(email)) {
+            showStatus(
+                'Please enter a valid email address.',
+                true
+            );
+            return;
+        }
+
+        var submitBtn = form.querySelector(
+            'button[type="submit"]'
+        );
+
+        var originalLabel = submitBtn
+            ? submitBtn.textContent
+            : '';
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+
+        // Send form data to Formspree
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'Accept': 'application/json'
             }
+        })
+        .then(function (response) {
 
-            if (!isValidEmail(email)) {
-                showStatus('Please enter a valid email address.', true);
-                return;
-            }
+            if (response.ok) {
 
-            var submitBtn = form.querySelector('button[type="submit"]');
-            var originalLabel = submitBtn ? submitBtn.textContent : '';
+                showStatus(
+                    'Thank you, ' + name +
+                    '! Your message has been sent successfully.',
+                    false
+                );
 
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Sending...';
-            }
-
-            // Simulated send. Replace this block with a real request, e.g.:
-            //
-            // fetch('https://your-endpoint.example.com/contact', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ name: name, email: email, message: message })
-            // })
-            //     .then(function (res) { ... })
-            //     .catch(function (err) { ... });
-
-            setTimeout(function () {
-                showStatus('Thanks, ' + name + ' — your message has been noted. I\'ll get back to you soon.', false);
                 form.reset();
 
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalLabel;
-                }
-            }, 600);
-        });
-    }
+            } else {
 
-});
+                showStatus(
+                    'Something went wrong. Please try again.',
+                    true
+                );
+
+            }
+
+        })
+        .catch(function () {
+
+            showStatus(
+                'Unable to send the message. Please try again.',
+                true
+            );
+
+        })
+        .finally(function () {
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalLabel;
+            }
+
+        });
+    });
+}
+   });
