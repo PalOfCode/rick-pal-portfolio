@@ -192,7 +192,6 @@ header {
     background: rgba(15, 18, 22, 0.85);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
-    transition: box-shadow 0.2s ease;
 }
 
 .navbar {
@@ -217,11 +216,10 @@ header {
 }
 
 .nav-links {
-    order: 3;
-    width: 100%;
-    justify-content: flex-start;   /* ← old version */
-    gap: 18px;
-    padding-bottom: 4px;
+    display: flex;
+    gap: 28px;
+    overflow-x: auto;
+    scrollbar-width: none;
 }
 
 .nav-links::-webkit-scrollbar {
@@ -240,6 +238,49 @@ header {
 .nav-links a:hover {
     color: var(--text);
     border-bottom-color: var(--accent);
+}
+
+.nav-links a.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.nav-toggle.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+header.scrolled {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .hire-btn {
@@ -824,12 +865,38 @@ footer {
         gap: 12px;
     }
 
+    .nav-toggle {
+        display: flex;
+        order: 2;
+    }
+
+    .hire-btn {
+        order: 1;
+        margin-left: auto;
+    }
+
     .nav-links {
         order: 3;
         width: 100%;
-        justify-content: flex-start;
-        gap: 18px;
-        padding-bottom: 4px;
+        max-height: 0;
+        overflow: hidden;
+        flex-direction: column;
+        gap: 0;
+        transition: max-height 0.25s ease;
+    }
+
+    .nav-links.open {
+        max-height: 320px;
+    }
+
+    .nav-links li {
+        width: 100%;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 12px 4px;
+        border-bottom: 1px solid var(--border);
     }
 
     .skills-container {
@@ -845,50 +912,155 @@ footer {
     }
 }
 
-/* ============================================================
-   JS-DRIVEN STATES
-   Classes toggled by script.js: active nav link, scrolled
-   header, scroll-reveal animations, and contact form feedback.
-   ============================================================ */
+/* ---------- Reveal-on-scroll (used by script.js) ---------- */
 
-/* Active nav link */
-.nav-links a.active-link {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-}
-
-/* Header once the page has scrolled past the top */
-header.scrolled {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-/* Scroll-reveal: elements fade + slide up into view */
 .reveal {
     opacity: 0;
     transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-.reveal-visible {
+.reveal.revealed {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* Contact form status message */
+/* ---------- Contact form status message ---------- */
+
 .form-status {
+    margin-top: 14px;
     font-size: 13.5px;
-    min-height: 18px;
-    display: none;
-}
-
-.form-status-visible {
-    display: block;
-}
-
-.form-status-success {
     color: var(--accent-teal);
+    min-height: 1em;
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
-.form-status-error {
-    color: #ff6b6b;
+.form-status.visible {
+    opacity: 1;
+}
+
+.form-status.error {
+    color: #ff8080;
+}
+
+/* ---------- Projects ---------- */
+
+.projects-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.project-card:hover {
+    border-color: var(--accent-teal);
+    transform: translateY(-4px);
+}
+
+/* title bar, echoing the hero terminal chrome */
+.project-window {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--surface-raised);
+    border-bottom: 1px solid var(--border);
+}
+
+.project-window span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-strong);
+}
+
+.project-thumb {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(135deg, rgba(255, 180, 84, 0.12), rgba(100, 216, 203, 0.1)),
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 2px, transparent 2px 10px);
+    border-bottom: 1px solid var(--border);
+}
+
+.project-thumb span {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-faint);
+}
+
+.project-body {
+    padding: 22px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.project-body h3 {
+    font-family: var(--font-display);
+    font-size: 17px;
+}
+
+.project-body p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    flex: 1;
+}
+
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.project-tags span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-teal);
+    background: rgba(100, 216, 203, 0.1);
+    border: 1px solid rgba(100, 216, 203, 0.25);
+    padding: 3px 9px;
+    border-radius: 4px;
+}
+
+.project-links {
+    display: flex;
+    gap: 18px;
+    margin-top: 4px;
+}
+
+.project-links a {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    transition: opacity 0.15s ease;
+}
+
+.project-links a:hover {
+    opacity: 0.75;
+}
+
+@media (max-width: 900px) {
+    .projects-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .projects-container {
+        grid-template-columns: 1fr;
+    }
 }
